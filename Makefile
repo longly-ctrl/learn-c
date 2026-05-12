@@ -1,4 +1,4 @@
-CFLAGS=-Wall -g
+CFLAGS=-Wall -g -DNDEBUG
 
 all: ex19
 
@@ -8,4 +8,4 @@ test:ex19
 	@echo "look around"
 	@printf "l\n" | ./ex19	
 clean:
-	rm -f ex19 object.o
+	rm -f ex19 object.o ex20
