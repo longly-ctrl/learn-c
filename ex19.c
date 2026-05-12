@@ -7,10 +7,14 @@
 
 int Monster_attack(void *self, int damage)
 {
+	assert(self != NULL);
+	assert(damage >= 0);
 	Monster *monster = self;
+	assert(monster->_(description) != NULL);
 
 	printf("You attack %s!\n", monster->_(description));
 
+	assert(monster->hit_points != NULL);
 	monster->hit_points -= damage;
 	
 	if(monster->hit_points > 0){
@@ -24,6 +28,7 @@ int Monster_attack(void *self, int damage)
 
 int Monster_init(void *self)
 {
+	assert(self != NULL);
 	Monster *monster = self;
 	monster->hit_points = 10;
 	return 1;
@@ -36,6 +41,8 @@ Object MonsterProto = {
 
 void *Room_move(void *self, Direction direction)
 {
+	assert(self != NULL);
+	assert(direction >= NORTH && direction <= WEST);
 	Room *room = self;
 	Room *next = NULL;
 
@@ -59,11 +66,14 @@ void *Room_move(void *self, Direction direction)
 	if(next){
 		next->_(describe)(next);
 	}
+	assert(next != NULL);
 	return next;
 }
 
 int Room_attack(void *self, int damage)
 {
+	assert(self != NULL);
+	assert(damage >= 0);
 	Room *room = self;
 	Monster *monster = room->bad_guy;
 
@@ -83,6 +93,9 @@ Object RoomProto = {
 
 void *Map_move(void *self, Direction direction)
 {
+	assert(self != NULL);
+	assert(direction >= NORTH && direction <= WEST);
+
 	Map *map = self;
 	Room *location = map->location;
 	Room *next = NULL;
@@ -92,11 +105,15 @@ void *Map_move(void *self, Direction direction)
 	if(next){
 		map->location = next;
 	}
+	assert(next != NULL);
 	return next;
 }
 
 int Map_attack(void *self, int damage)
 {
+	assert(self != NULL);
+	assert(damage >= 0);
+
 	Map *map = self;
 	Room *location = map->location;
 	
@@ -105,6 +122,7 @@ int Map_attack(void *self, int damage)
 
 int Map_init(void *self)
 {
+	assert(self != NULL);
 	Map *map = self;
 
 	Room *hall = NEW(Room, "The great Hall");
@@ -137,6 +155,7 @@ Object MapProto = {
 
 int process_input(Map *game)
 {
+	assert(game != NULL);
 	printf("\n> ");
 
 	char ch = getchar();

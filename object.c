@@ -40,7 +40,7 @@ void *Object_move(void *self, Direction direction)
 int Object_attack(void *self, int damage)
 {
 	assert(self != NULL);
-	assert(damage > 0);
+	assert(damage >= 0);
 	printf("You can't attack that.\n");
 	return 0;
 }
@@ -48,7 +48,8 @@ int Object_attack(void *self, int damage)
 
 void *Object_new(size_t size, Object proto, char *description)
 {
-	assert(size > sizeof(Object));
+	assert(size >= sizeof(Object));
+	assert(description != NULL);
 	if(!proto.init) proto.init = Object_init;
 	if(!proto.describe) proto.describe = Object_describe;
 	if(!proto.destroy) proto.destroy = Object_destroy;
@@ -60,6 +61,7 @@ void *Object_new(size_t size, Object proto, char *description)
 	*el = proto;
 
 	el->description = strdup(description);
+	assert(el->description != NULL);
 
 	if(!el->init(el)){
 		el->destroy(el);
