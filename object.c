@@ -67,6 +67,7 @@ void *Object_new(size_t size, Object proto, char *description)
 		el->destroy(el);
 		return NULL;
 	}else {
+		assert(el != NULL);
 		return el;
 	}
 }

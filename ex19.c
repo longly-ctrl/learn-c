@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <time.h>
 #include "ex19.h"
 
@@ -14,7 +15,6 @@ int Monster_attack(void *self, int damage)
 
 	printf("You attack %s!\n", monster->_(description));
 
-	assert(monster->hit_points != NULL);
 	monster->hit_points -= damage;
 	
 	if(monster->hit_points > 0){
@@ -66,7 +66,6 @@ void *Room_move(void *self, Direction direction)
 	if(next){
 		next->_(describe)(next);
 	}
-	assert(next != NULL);
 	return next;
 }
 
@@ -97,6 +96,7 @@ void *Map_move(void *self, Direction direction)
 	assert(direction >= NORTH && direction <= WEST);
 
 	Map *map = self;
+	assert(map->location != NULL);
 	Room *location = map->location;
 	Room *next = NULL;
 
@@ -105,7 +105,6 @@ void *Map_move(void *self, Direction direction)
 	if(next){
 		map->location = next;
 	}
-	assert(next != NULL);
 	return next;
 }
 
@@ -115,6 +114,7 @@ int Map_attack(void *self, int damage)
 	assert(damage >= 0);
 
 	Map *map = self;
+	assert(map->location != NULL);
 	Room *location = map->location;
 	
 	return location->_(attack)(location, damage);
@@ -126,11 +126,16 @@ int Map_init(void *self)
 	Map *map = self;
 
 	Room *hall = NEW(Room, "The great Hall");
+	assert(hall != NULL);
 	Room *throne = NEW(Room, "The throne room");
+	assert(throne != NULL);
 	Room *arena = NEW(Room, "The arena, with the minotaur");
+	assert(arena != NULL);
 	Room *kitchen = NEW(Room, "Kitchen, you have the knife now");
+	assert(kitchen != NULL);
 
 	arena->bad_guy = NEW(Monster, "The evil minotaur");
+	assert(arena->bad_guy != NULL);
 
 	hall->north = throne;
 
@@ -209,6 +214,8 @@ int main(int argc,char *argv[])
 	srand(time(NULL));
 
 	Map *game = NEW(Map, "The Hall of the Minotaur.");
+	assert(game != NULL);
+	assert(game->location != NULL);
 
 	printf("You enter the ");
 	game->location->_(describe)(game->location);
