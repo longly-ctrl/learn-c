@@ -6,6 +6,7 @@
 
 void Object_destroy(void *self)
 {
+	assert(self != NULL);
 	Object *obj = self;
 
 	if(obj){
@@ -16,23 +17,30 @@ void Object_destroy(void *self)
 
 void Object_describe(void *self)
 {
+	assert(self != NULL);
 	Object *obj = self;
+	assert(obj->description != NULL);
 	printf("%s.\n", obj->description);
 }
 
 int Object_init(void *self)
 {
+	assert(self != NULL);
 	return 1;
 }
 
 void *Object_move(void *self, Direction direction)
 {
+	assert(self != NULL);
+	assert(direction >= NORTH && direction <= WEST);
 	printf("You can't go that direction.\n");
 	return NULL;
 }
 
 int Object_attack(void *self, int damage)
 {
+	assert(self != NULL);
+	assert(damage > 0);
 	printf("You can't attack that.\n");
 	return 0;
 }
@@ -40,6 +48,7 @@ int Object_attack(void *self, int damage)
 
 void *Object_new(size_t size, Object proto, char *description)
 {
+	assert(size > sizeof(Object));
 	if(!proto.init) proto.init = Object_init;
 	if(!proto.describe) proto.describe = Object_describe;
 	if(!proto.destroy) proto.destroy = Object_destroy;
@@ -47,6 +56,7 @@ void *Object_new(size_t size, Object proto, char *description)
 	if(!proto.move) proto.move = Object_move;
 
 	Object *el = calloc(1, size);
+	assert(el != NULL);
 	*el = proto;
 
 	el->description = strdup(description);
