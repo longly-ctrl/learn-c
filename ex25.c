@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 	check(rc == 0, "Failed first name.");
 
 	printf("What's your initial.");
-	rc = read_scan("%c", &initial);
+	rc = read_scan("%c\n", &initial);
 	check(rc == 0, "Failed initial.");
 
 	printf("What's your last name?");
@@ -116,6 +116,7 @@ int main(int argc, char *argv[])
 
 	printf("How old are you?");
 	rc = read_scan("%d", &age);
+	check(rc == 0, "Failed age.");
 
 	printf("---RESULTS-----\n");
 	printf("First name: %s", first_name);
@@ -127,5 +128,7 @@ int main(int argc, char *argv[])
 	free(last_name);
 	return 0;
 error:
+	if(first_name) free(first_name);
+	if(last_name) free(last_name);
 	return -1;
 }
