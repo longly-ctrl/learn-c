@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 #include "dbg.h"
 
 #define MAX_DATA 100
@@ -20,6 +22,34 @@ typedef struct Person {
 	float income;
 } Person;
 
+int strip_and_check_name(char *name)
+{
+	int i = 0;
+	int len = 0;
+
+	check(name != NULL, "Name is NULL.");
+
+	len = strlen(name);
+	check(len > 0, "Name is empty.");
+
+	if(name[len - 1] == '\n') {
+		name[len - 1] = '\0';
+		len--;
+	}
+
+	check(len > 0, "Name is empty.");
+
+	for(i = 0; i < len; i++) {
+		check(!isspace((unsigned char)name[i]),
+				"Name cannot contain whitespace.");
+	}
+
+	return 0;
+
+error:
+	return -1;
+}
+
 int main(int argc, char *argv[])
 {
 	Person you = {.age = 0};
@@ -29,10 +59,12 @@ int main(int argc, char *argv[])
 	printf("What's your First Name? ");
 	in = fgets(you.first_name, MAX_DATA-1, stdin);
 	check(in != NULL, "Failed to read first name.");
+	check(strip_and_check_name(you.first_name) == 0, "Invalid first name.");
 
 	printf("What's your Last Name? ");
 	in = fgets(you.last_name, MAX_DATA-1, stdin);
 	check(in != NULL, "Failed to read last name.");
+	check(strip_and_check_name(you.last_name) == 0, "Invalid last name.");
 
 	printf("How old are you?");
 	int rc = fscanf(stdin, "%d", &you.age);
@@ -57,8 +89,8 @@ int main(int argc, char *argv[])
 
 	printf("-----RESULTS-----\n");
 
-	printf("First Name: %s", you.first_name);
-	printf("Last Name: %s", you.last_name);
+	printf("First Name: %s\n", you.first_name);
+	printf("Last Name: %s\n", you.last_name);
 	printf("Age: %d\n", you.age);
 	printf("Eyes: %s\n", EYE_COLOR_NAMES[you.eyes]);
 	printf("Income: %f\n", you.income);
