@@ -14,12 +14,12 @@ typedef struct Shell {
 	apr_exit_why_e exit_why;
 	int exit_code;
 
-	int replace-count; 
+	int replace_count; 
 	const char *args[MAX_COMMAND_ARGS];
 } Shell;
 
 int Shell_run(apr_pool_t *p, Shell *cmd);
-int Shell_exec(Shell *cmd, ...);
+int Shell_exec(Shell cmd, ...);
 
 extern Shell CLEANUP_SH;
 extern Shell GIT_SH;

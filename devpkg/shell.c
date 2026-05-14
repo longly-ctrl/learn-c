@@ -4,7 +4,7 @@
 
 int Shell_exec(Shell template, ...)
 {
-	apr_tool_t *p = NULL;
+	apr_pool_t *p = NULL;
 	int rc = -1;
 	apr_status_t rv = APR_SUCCESS;
 	va_list argp;
@@ -28,7 +28,7 @@ int Shell_exec(Shell template, ...)
 		found = 0;
 		for(i = 0; template.args[i] != NULL; i++) {
 			if(strcmp(template.arg[i], key) == 0) {
-					template.arg[i] = arg;
+					template.args[i] = arg;
 					found = 1;
 					replaced++;
 					break;
@@ -55,7 +55,7 @@ int Shell_run(apr_pool_t *p, Shell *cmd)
 {
 	apr_procattr_t *attr;
 	apr_status_t rv;
-	apt_proc_t newproc;
+	apr_proc_t newproc;
 
 	rv = apr_procattr_create(&attr, p);
 	check(rv == APR_SUCCESS, "Failed to create proc attr.");
@@ -73,7 +73,7 @@ int Shell_run(apr_pool_t *p, Shell *cmd)
 	check(rv == APR_SUCCESS, "Failed to run command.");
 
 	rv = apr_proc_wait(&newproc, &cmd->exit_code, &cmd->exit_why, APR_WAIT);
-	check(rv == APR_CUCCESS, "Failed to wait");
+	check(rv == APR_CHILD_DONE, "Failed to wait");
 
 	check(cmd->exit_code == 0, "%s exited badly.", cmd->exe);
 	check(cmd->exit_why == APR_PROC_EXIT, "%s was killed or crashed.", cmd->exe);

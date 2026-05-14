@@ -12,7 +12,7 @@ static FILE *DB_open(const char *path, const char *mode)
 
 }
 
-static void DB_clse(FILE *db)
+static void DB_close(FILE *db)
 {
 	return fclose(db);
 }
@@ -22,8 +22,8 @@ static bstring DB_load()
 	FILE *db = NULL;
 	bstring data = NULL;
 
-	db = DB_open(DB_FILE, 'r');
-	check(db != NUll, "Failed to open database: %s", DB_FILE);
+	db = DB_open(DB_FILE, "r");
+	check(db != NULL, "Failed to open database: %s", DB_FILE);
 
 	data = bread((bNread)fread, db);
 	check(data, "Failed to read from db file: %s", DB_FILE);
@@ -33,7 +33,7 @@ static bstring DB_load()
 
 error:
 	if(db) DB_close(db);
-	if(data) bdstroy(data);
+	if(data) bdestroy(data);
 	return NULL;
 }
 
@@ -58,7 +58,7 @@ error:
 }
 
 
-int DB_find(const char url)
+int DB_find(const *char url)
 {
 	bstring data = NULL;
 	int res = -1;
