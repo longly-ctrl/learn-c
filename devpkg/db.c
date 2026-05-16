@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <unistd.h>
 #include <apr_errno.h>
 #include <apr_file_io.h>
 
@@ -14,7 +14,7 @@ static FILE *DB_open(const char *path, const char *mode)
 
 static void DB_close(FILE *db)
 {
-	return fclose(db);
+	fclose(db);
 }
 
 static bstring DB_load()
@@ -39,7 +39,7 @@ error:
 
 int DB_update(const char *url)
 {
-	if(DB_find) {
+	if(DB_find(url)) {
 		log_info("Already recorded as installed: %s", url);
 	}
 
@@ -58,9 +58,10 @@ error:
 }
 
 
-int DB_find(const *char url)
+int DB_find(const char *url)
 {
 	bstring data = NULL;
+	bstring line = bfromcstr(url);
 	int res = -1;
 
 	data = DB_load();
@@ -88,7 +89,7 @@ int DB_init()
 	if(access(DB_DIR, W_OK | X_OK) == -1) {
 		apr_status_t rc = apr_dir_make_recursive(DB_DIR,
 				APR_UREAD | APR_UWRITE | APR_UEXECUTE |
-				APR_GREAD | APR_GWRITE | APR_GEXECUTE, P);
+				APR_GREAD | APR_GWRITE | APR_GEXECUTE, p);
 		check(rc == APR_SUCCESS, "Failed to make database dir: %s", DB_DIR);
 	}
 

@@ -1,0 +1,73 @@
+devpkg
+
+devpkg is a small source package installer written in C.
+
+It can:
+- initialize a local package database
+- list installed package URLs
+- fetch source archives
+- build source code from /tmp/pkg-build
+- install packages from URLs
+- process DEPENDS files
+
+Usage:
+
+	./devpkg -S
+
+Initialize the database directory and database file.
+
+	./devpkg -L
+
+List installed package URLs.
+
+	./devpkg -I URL
+
+Fetch, build, install, and record a package URL.
+
+EXamples:
+	./devpkg -I http://example.com/package.tar.gz
+	./devpkg -I http://example.com/package.tar.bz2
+	./devpkg -I git://example.com/project.git
+
+	./devpkg -F URL
+
+Fetch source only. This downloads or prepares the source, but does not build or install it.
+
+	./devpkg -B URL
+
+Build and install form the exsisting build directory.
+
+	./devpkg -c OPTS
+
+Pass options to ./configure.
+
+Example:
+	./devpkg -I http://example.com/package.tar.gz -c --prefix=/usr/local
+
+	./devpkg -m OPTS
+
+Pass options to make.
+
+Example:
+	./devpkg -I http://example.com/package.tar.gz -m -j4
+
+	./devpkg -i TARGET
+
+Pass a target to make through sudo make TARGET.
+
+Example:
+	./devpkg -I http://example.com/package.tar.gz -i install
+
+Typical install flow:
+
+	./devpkg -S
+	./devpkg -I URL
+	./devpkg -L
+
+Notes:
+
+- devpkg stores installed package URLs in /usr/loacl/.devpkg/db.
+- Temporary build files are stored in /tmp/pkg-build.
+- Downloaded tarballs are stored temporarily in /tmp/pkg-src.tar.gz or /tmp/pkg-src-tar-bz2.
+- DEPENDS files are downloaded temporarily to /tmp/DEPENDS.
+- Commands such as curl, git, tar, make, and sudo must be available.

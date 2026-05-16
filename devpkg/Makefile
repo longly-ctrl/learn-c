@@ -4,7 +4,8 @@ LDFLAGS=-L${PREFIX}/apr/lib -lapr-1 -pthread -laprutil-1
 
 all: devpkg
 
-devpkg: bstrlib.o db.o shell.o commands.o
+devpkg: devpkg.o bstrlib.o db.o shell.o commands.o
+	$(CC) $(CFLAGS) -o $@ devpkg.o bstrlib.o db.o shell.o commands.o $(LDFLAGS)
 
 install: all
 	install -d $(DESTDIR)/$(PREFIX)/bin/

@@ -27,7 +27,7 @@ int Shell_exec(Shell template, ...)
 		check(arg != NULL, "Missing value for replacement key: %s", key);
 		found = 0;
 		for(i = 0; template.args[i] != NULL; i++) {
-			if(strcmp(template.arg[i], key) == 0) {
+			if(strcmp(template.args[i], key) == 0) {
 					template.args[i] = arg;
 					found = 1;
 					replaced++;
@@ -39,7 +39,7 @@ int Shell_exec(Shell template, ...)
 	}
 	check(replaced == template.replace_count,
 			"Wrong number of replacements for %s: expected %d, got %d.",
-			template.exe, template.replaced_count, replaced);
+			template.exe, template.replace_count, replaced);
 	rc = Shell_run(p, &template);
 	apr_pool_destroy(p);
 	va_end(argp);
@@ -87,7 +87,7 @@ error:
 Shell CLEANUP_SH = {
 	.exe = "rm",
 	.dir = "/tmp",
-	replace_count = 0,
+	.replace_count = 0,
 	.args = {"rm", "-rf", "/tmp/pkg-build", "/tmp/pkg-src.tar.gz",
 		"/tmp/pkg-src.tar.bz2", "/tmp/DEPENDS", NULL}
 };
@@ -95,42 +95,42 @@ Shell CLEANUP_SH = {
 Shell GIT_SH = {
 	.exe = "git",
 	.dir = "/tmp",
-	replace_count = 1,
+	.replace_count = 1,
 	.args = {"git", "clone", "URL", "pkg-build", NULL}
 };
 
 Shell TAR_SH = {
 	.exe = "tar",
 	.dir = "/tmp/pkg-build",
-	replace_count = 1,
+	.replace_count = 1,
 	.args = {"tar", "-xzf", "FILE", "--strip-comments", "1", NULL}
 };
 
 Shell CURL_SH = {
 	.exe = "curl",
 	.dir = "/tmp",
-	replace_count = 2,
+	.replace_count = 2,
 	.args = {"curl", "-L", "-o", "TARGET", "URL", NULL}
 };
 
 Shell CONFIGURE_SH = {
 	.exe = "./configure",
 	.dir = "/tmp/pkg-build",
-	replace_count = 1,
+	.replace_count = 1,
 	.args = {"configure", "OPTS", NULL}
 };
 
 Shell MAKE_SH = {
 	.exe = "make",
 	.dir = "/tmp/pkg-build",
-	replace_count = 1,
+	.replace_count = 1,
 	.args = {"make", "OPTS", NULL}
 };
 
 Shell INSTALL_SH = {
 	.exe = "sudo",
 	.dir = "/tmp/pkg-build",
-	replace_count = 1,
+	.replace_count = 1,
 	.args = {"sudo", "make", "TARGET", NULL}
 };
 

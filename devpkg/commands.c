@@ -1,19 +1,19 @@
-#include <qpr_uri.h>
+#include <apr_uri.h>
 #include <apr_fnmatch.h>
 #include <unistd.h>
 
-#include "command.h"
+#include "commands.h"
 #include "dbg.h"
 #include "bstrlib.h"
 #include "db.h"
 #include "shell.h"
 
-int Command_depends(apr_tool_t *p,const char *path)
+int Command_depends(apr_pool_t *p,const char *path)
 {
 	FILE *in = NULL;
 	bstring line = NULL;
 
-	in = fopen(path, 'r');
+	in = fopen(path, "r");
 	check(in != NULL, "Failed to open downloaded depends: %s", path);
 
 	for(line = bgets((bNgetc)fgetc, in, '\n'); line != NULL; line = bgets((bNgetc)fgetc, in, '\n'))
@@ -26,12 +26,12 @@ int Command_depends(apr_tool_t *p,const char *path)
 		bdestroy(line);
 
 	}
-	fcolse(in);
+	fclose(in);
 	return 0;
 
 error:
 	if(line) bdestroy(line);
-	if(in) fclose(im);
+	if(in) fclose(in);
 	return -1;
 }
 
@@ -42,7 +42,7 @@ int Command_fetch(apr_pool_t *p, const char *url, int fetch_only)
 	const char *depend_file = NULL;
 	apr_status_t rv = apr_uri_parse(p, url, &info);
 
-	check(ev == APR_SUCCESS, "Failed to parse URL: %s", url);
+	check(rv == APR_SUCCESS, "Failed to parse URL: %s", url);
 
 	if(apr_fnmatch(GIT_PAT, info.path, 0) == APR_SUCCESS) {
 		rc = Shell_exec(GIT_SH, "URL", url, NULL);
@@ -51,15 +51,15 @@ int Command_fetch(apr_pool_t *p, const char *url, int fetch_only)
 		check(!fetch_only, "No point in fetching a DEPENDS file.");
 
 		if(info.scheme){
-			depends_file = DEPENDS_PATH;
-			rc = Shell_exec(CURL_SH, "URL", url, "TARGET", depends_file, NULL);
+			depend_file = DEPENDS_PATH;
+			rc = Shell_exec(CURL_SH, "URL", url, "TARGET", depend_file, NULL);
 			check(rc == 0, "Curl failed");
 		}else {
-			depends_file = info.path;
+			depend_file = info.path;
 		}
 
 		log_info("Building according to DEPENDS: %s", url);
-		rv = Command_depends(p, depends_file);
+		rv = Command_depends(p, depend_file);
 		check(rv == 0, "Failed to process the DEPENDS: %s", url);
 
 		return 0;
@@ -69,11 +69,11 @@ int Command_fetch(apr_pool_t *p, const char *url, int fetch_only)
 			rc = Shell_exec(CURL_SH, "URL", url, "TARGET", TAR_GZ_SRC, NULL);
 			check(rc == 0, "Failed to curl source: %s", url);
 		}
-		rv = apr_dir_make_recursive(BUILD_DIR, APR_UREAD | APR_UWRITE | APR_UEXECTE, p);
+		rv = apr_dir_make_recursive(BUILD_DIR, APR_UREAD | APR_UWRITE | APR_UEXECUTE, p);
 		check(rv == APR_SUCCESS, "Failed to make directory %s", BUILD_DIR);
 
 		rc = Shell_exec(TAR_SH, "FILE", TAR_GZ_SRC, NULL);
-		check(rc == 0, "Failed to untar: %S", TAR_GZ_SRC, NULL);
+		check(rc == 0, "Failed to untar: %s", TAR_GZ_SRC);
 	}else if(apr_fnmatch(TAR_BZ2_PAT, info.path, 0) == APR_SUCCESS) {
 		if(info.scheme) {
 			rc = Shell_exec(CURL_SH, "URL", url, "TARGET", TAR_BZ2_SRC, NULL);
@@ -126,7 +126,7 @@ error:
 	return -1;
 }
 
-int command_install(apr_pool_t *p, const char *url, const char *configure_opts,
+int Command_install(apr_pool_t *p, const char *url, const char *configure_opts,
 		const char *make_opts, const char *install_opts)
 {
 	int rc = 0;
