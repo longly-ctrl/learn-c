@@ -3,6 +3,8 @@
 #include <assert.h>
 
 static List *list = NULL;
+static List *copy = NULL;
+static List *result = NULL;
 char *test1 = "test1 data";
 char *test2 = "test2 data";
 char *test3 = "test3 data";
@@ -18,6 +20,8 @@ char *test_create()
 char *test_destroy()
 {
 	List_clear_destroy(list);
+	List_clear_destroy(copy);
+	List_clear_destroy(result);
 
 	return NULL;
 }
@@ -86,6 +90,42 @@ char *test_shift()
 	return NULL;
 }
 
+char *test_copy()
+{
+	List_push(list, test1);
+     	List_push(list, test2);
+	List_push(list, test3);
+	
+	copy = List_copy(list);
+	mu_assert(copy != NULL, "Failed to copy list.");
+	mu_assert(List_count(copy) == 3, "Wrong copy count.");
+	mu_assert(List_first(copy) == test1, "Wrong copy first.");
+	mu_assert(List_last(copy) == test3, "Wrong copy last.");
+
+}
+
+char *test_concat()
+{
+	result = List_concat(list, copy);
+	mu_assert(result != NULL, "Failed to concatenate.");
+	mu_assert(List_count(result) == 6, "Wrong result count.");
+	mu_assert(List_first(result) == test1, "Wrong result first.");
+	mu_assert(List_last(result) == test3, "Wrong result last.");
+}
+ 
+char *test_split()
+{
+	List *right = List_create();
+	right = List_split(list, list->first->next);
+
+	mu_assert(List_count(list) == 1, "Wrong left count after split.");
+	mu_assert(List_count(right) == 5, "Wrong right count after split.");
+	mu_assert(List_first(list) == test1, "Wrong left first.");
+	mu_assert(List_first(right) == test2, "Wrong right first.");
+	mu_assert(List_last(list) == test1, "Wrong left last.");
+	mu_assert(List_last(right) == test3, "Wrong right last.");
+}
+
 char *all_tests()
 {
 	mu_suite_start();
@@ -95,6 +135,9 @@ char *all_tests()
 	mu_run_test(test_unshift);
 	mu_run_test(test_remove);
 	mu_run_test(test_shift);
+	mu_run_test(test_copy);
+	mu_run_test(test_concat);
+	mu_run_test(test_split);
 	mu_run_test(test_destroy);
 
 	return NULL;

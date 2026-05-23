@@ -15,13 +15,13 @@
 #define RUN_TEST(name) int main(int argc, char *argv[]) {\
 	argc = 1; \
 	debug("----- RUNNING: %s", argv[0]); \
-	printf("-----\nRUNING: %s", argv[0]); \
+	printf("-----\nRUNING: %s\n", argv[0]); \
 	char *result = name(); \
 	if(result != 0) {\
 		printf("FAILED: %s\n", result); \
 	}\
 	else { \
-		printf("ALL TESTS PASSED");\
+		printf("ALL TESTS PASSED\n");\
 	}\
 	printf("Tests run: %d\n", tests_run);\
 	exit(result != 0);\
