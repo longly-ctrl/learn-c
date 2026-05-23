@@ -1,5 +1,24 @@
+#undef NDEGUG
+#include <assert.h>
 #include <lcthw/list.h>
 #include <lcthw/dbg.h>
+
+static void List_Check_invariant(List *list)
+{
+	assert(list != NULL);
+	assert(list->count >= 0);
+
+	if(list->count == 0) {
+		assert(list->first == NULL);
+		assert(list->last == NULL);
+	}else {
+		assert(list->first != NULL);
+		assert(list->last != NULL);
+		assert(list->first->prev == NULL);
+		assert(list->last->next == NULL);
+
+	}
+}
 
 List *List_create()
 {
@@ -7,6 +26,7 @@ List *List_create()
 }
 void List_destroy(List *list)
 {
+	assert(list != NULL):
 	LIST_FOREACH(list, first, next, cur) {
 		if(cur->prev) {
 			free(cur->prev);
@@ -20,6 +40,7 @@ void List_destroy(List *list)
 
 void List_clear(List *list) 
 {
+	assert(list != NULL);
 	LIST_FOREACH(list, first, next, cur) {
 		free(cur->value);
 	}
@@ -27,12 +48,22 @@ void List_clear(List *list)
 
 void List_clear_destroy(List *list)
 {
-	List_clear(list);
-	List_destroy(list);
+	assert(list != NULL):
+	LIST_FOREACH(list, first, next, cur) {
+		free(cur->value);
+		if(cur->prev) {
+			free(cur->prev);
+		}
+	}
+	free(list->last);
+	free(list);
+
+
 }
 
 void List_push(List *list, void *value)
 {
+	assert(list != NULL);
 	ListNode *node = calloc(1, sizeof(ListNode));
 	check_mem(node);
 
@@ -55,12 +86,15 @@ error:
 
 void *List_pop(List *list) 
 {
+	assert(list != NULL);
 	ListNode *node = list->last;
 	return node != NULL ? List_remove(list, node) : NULL;
 }
 
 void List_unshift(List *list, void *value)
 {
+	assert(list != NULL);
+	assert(value != NULL);
 	ListNode *node = calloc(1, sizeof(ListNode));
 	check_mem(node);
 
@@ -82,12 +116,16 @@ error:
 
 void *List_shift(List *list)
 {
+	assert(list != NULL);
+
 	ListNode *node = list->first;
 	return node != NULL ? List_remove(list, node) : NULL;
 }
 
 void *List_remove(List *list, ListNode *node)
 {
+	assert(list != NULL);
+	assert(node != NULL);
 	void *result = NULL;
 
 	check(list->first && list->last, "List is empty.");
@@ -116,5 +154,84 @@ void *List_remove(List *list, ListNode *node)
 
 error:
 	return result;
+}
+
+List *List_copy(List *list)
+{
+	List *copy = NULL;
+	check(list != NULL, "list can't be NULL");
+
+	copy = List_create();
+	check_mem(copy);
+
+	LIST_FOREACH(list, first, next, cur) {
+		int before = copy->count;
+		List_push(copy, cur->value);
+		check(copy->count == before + 1, "Failed to copy list node.");
+	}
+	return copy;
+
+error:
+	if(copy) List_clear_destroy(copy);
+	return NULL;
+}
+
+List *List_concat(List *left, List *right) 
+{
+	List *result = NULL;
+	check(left != NULL, "left can't be NULL.");
+	check(right != NULL, "right can't be NULL");
+
+	result = List_copy(left);
+	check(result != NULL, "Failed to copy left list.");
+
+	LIST_FOREACH(right, first, next, cur) {
+		int before = reslut->count;
+		List_push(reslut, cur->value);
+		check(result->count == before + 1, "Failed to append right node.");
+	}
+	return result;
+
+error:
+	if(result) List_clear_destroy(result);
+	return NULL;
+
+}
+
+List *List_split(List *list, ListNode *node) 
+{
+	List *right = NULL;
+	int right_count = 0;
+	check(list != NULL, "list can't be NULL.");
+	check(node != NULL, "value can't be NULL.");
+
+	right = List_create();
+	check_mem(right);
+
+	right->first = node;
+	right->last = list->last;
+
+	if(node->prev) {
+		list->last = node->prev;
+		list->last->next = NULL;
+		node->prev = NULL;
+	}else {
+		list->first = NULL;
+		list->last = NULL;
+	}
+
+	LIST_FOREACH(right, first, next, cur) {
+		right_count++;
+	}
+
+	right->count = right_count;
+	list->count -= right_count;
+
+	check(list->count >= 0, "Invalid split count.");
+
+	return right;
+error:
+	if(right) List_clear_destroy(right);
+	return NULL;
 }
 
