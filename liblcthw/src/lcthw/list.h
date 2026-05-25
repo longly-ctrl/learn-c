@@ -24,14 +24,6 @@ typedef struct List {
 } List;
 
 /*
- * Check that the list's internal structure is valid.
- *
- * This verifies the basic invariants that every list operation must perserve:
- * the list pointer is not NULL, count is never negative, an empty list has no
- * first or last node, and a non-empty list has valid first and last nodes.
- */
-static void List_Check_invariant(List *list);
-/*
  * Create a new empty list.
  */
 List *List_create();
@@ -118,6 +110,7 @@ List *List_split(List *list, ListNode *value);
  * Example:
  * LIST_FOREACH(list, first, next, cur) walks forword.
  * LIST_FORRACH(list, last, prev, cur) walks backward.
+ */
 #define LIST_FOREACH(L, S, M, V) ListNode *_node = NULL;\
 						ListNode *V = NULL;\
 						for(V = _node = L->S; _node != NULL; V = _node =_node->M)

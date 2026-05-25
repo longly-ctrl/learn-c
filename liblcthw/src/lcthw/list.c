@@ -26,7 +26,7 @@ List *List_create()
 }
 void List_destroy(List *list)
 {
-	assert(list != NULL):
+	assert(list != NULL);
 	LIST_FOREACH(list, first, next, cur) {
 		if(cur->prev) {
 			free(cur->prev);
@@ -48,7 +48,7 @@ void List_clear(List *list)
 
 void List_clear_destroy(List *list)
 {
-	assert(list != NULL):
+	assert(list != NULL);
 	LIST_FOREACH(list, first, next, cur) {
 		free(cur->value);
 		if(cur->prev) {
@@ -79,6 +79,7 @@ void List_push(List *list, void *value)
 	}
 
 	list->count++;
+	List_Check_invariant(list);
 
 error:
 	return;
@@ -109,6 +110,7 @@ void List_unshift(List *list, void *value)
 		list->first = node;
 	}
 	list->count++;
+	List_Check_invariant(list);
 
 error:
 	return;
@@ -149,6 +151,7 @@ void *List_remove(List *list, ListNode *node)
 		before->next = after;
 	}
 	list->count--;
+	List_Check_invariant(list);
 	result = node->value;
 	free(node);
 
@@ -186,8 +189,8 @@ List *List_concat(List *left, List *right)
 	check(result != NULL, "Failed to copy left list.");
 
 	LIST_FOREACH(right, first, next, cur) {
-		int before = reslut->count;
-		List_push(reslut, cur->value);
+		int before = result->count;
+		List_push(result, cur->value);
 		check(result->count == before + 1, "Failed to append right node.");
 	}
 	return result;
@@ -226,6 +229,7 @@ List *List_split(List *list, ListNode *node)
 
 	right->count = right_count;
 	list->count -= right_count;
+	List_Check_invariant(list);
 
 	check(list->count >= 0, "Invalid split count.");
 
