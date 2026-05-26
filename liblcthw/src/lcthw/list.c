@@ -5,6 +5,8 @@
 
 static void List_Check_invariant(List *list)
 {
+	int count = 0;
+	ListNode *cur = NULL;
 	assert(list != NULL);
 	assert(list->count >= 0);
 
@@ -18,6 +20,18 @@ static void List_Check_invariant(List *list)
 		assert(list->last->next == NULL);
 
 	}
+
+	for(cur = list->first; cur != NULL; cur = cur->next) {
+		if(cur->next) {
+			assert(cur->next->prev == cur);
+		}
+		if(cur->prev) {
+			assert(cur->prev->next == cur);
+		}
+		count++;
+
+	}
+	assert(list->count == count);
 }
 
 List *List_create()
@@ -150,6 +164,7 @@ void *List_remove(List *list, ListNode *node)
 		after->prev = before;
 		before->next = after;
 	}
+
 	list->count--;
 	List_Check_invariant(list);
 	result = node->value;
@@ -175,7 +190,7 @@ List *List_copy(List *list)
 	return copy;
 
 error:
-	if(copy) List_clear_destroy(copy);
+	if(copy) List_destroy(copy);
 	return NULL;
 }
 
@@ -196,7 +211,7 @@ List *List_concat(List *left, List *right)
 	return result;
 
 error:
-	if(result) List_clear_destroy(result);
+	if(result) List_destroy(result);
 	return NULL;
 
 }
@@ -245,7 +260,7 @@ int List_join(List *left, List *right)
 	check(right != NULL, "right should not be NULL.");
 
 	if(List_count(right) == 0) {
-		return;
+		return 0;
 	}
 	if(List_count(left) == 0) {
 		left->first = right->first;

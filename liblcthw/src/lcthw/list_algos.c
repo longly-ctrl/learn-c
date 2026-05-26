@@ -12,6 +12,7 @@ int List_bubble_sort(List *list, List_compare cmp)
 {
 	int sorted = 1;
 	check(list != NULL, "list can't be NULL.");
+	check(cmp != NULL, "cmp can't be NULL.");
 
 	if(List_count(list) <= 1) {
 		return 0;
@@ -34,8 +35,12 @@ error:
 	return 1;
 }
 
-inline List *List_merge(List *left, List *right, List_compare cmp)
+static List *List_merge(List *left, List *right, List_compare cmp)
 {
+	check(left != NULL, "left can't be NULL.");
+	check(right != NULL, "right can't be NULL.");
+	check(cmp != NULL, "cmp can't be NULL.");
+
 	List *result = List_create();
 	check_mem(result);
 
@@ -67,6 +72,9 @@ error:
 
 List *List_merge_sort(List *list, List_compare cmp)
 {
+	check(list != NULL, "list can't be NULL.");
+	check(cmp != NULL, "cmp can't be NULL.");
+
 	if(List_count(list) <= 1) {
 		return list;
 	}
@@ -100,4 +108,25 @@ error:
 	return NULL;
 }
 
+int List_is_sorted(List *list, List_compare cmp)
+{
+	check(list != NULL, "list can't be NULL.");
+	check(cmp != NULL, "cmp can't be NULL.");
+
+	if(List_count(list) <= 1) {
+		return 1;
+	}
+	
+	LIST_FOREACH(list, first, next, cur) {
+		if(cur->next && cmp(cur->value, cur->next->value) > 0) {
+			return 0;
+		}
+
+	}
+
+	return 1;
+
+error:
+	return 0;
+}
 
