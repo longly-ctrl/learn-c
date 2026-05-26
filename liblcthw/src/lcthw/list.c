@@ -200,7 +200,7 @@ List *List_concat(List *left, List *right)
 	check(left != NULL, "left can't be NULL.");
 	check(right != NULL, "right can't be NULL");
 
-
+	result = List_copy(left);
 	check(result != NULL, "Failed to copy left list.");
 
 	LIST_FOREACH(right, first, next, cur) {

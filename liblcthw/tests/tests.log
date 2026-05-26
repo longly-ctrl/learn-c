@@ -1,9 +1,9 @@
-DEBUG tests/list_algos_tests.c:177:main: ----- RUNNING: ./tests/list_algos_tests
-DEBUG tests/list_algos_tests.c:169:all_tests: 
------ test_bubble_sort
+DEBUG tests/list_algos_tests.c:178:main: ----- RUNNING: ./tests/list_algos_tests
 DEBUG tests/list_algos_tests.c:170:all_tests: 
------ test_merge_sort
+----- test_bubble_sort
 DEBUG tests/list_algos_tests.c:171:all_tests: 
+----- test_merge_sort
+DEBUG tests/list_algos_tests.c:172:all_tests: 
 ----- test_sort_performance
 DEBUG tests/list_tests.c:151:main: ----- RUNNING: ./tests/list_tests
 DEBUG tests/list_tests.c:138:all_tests: 
@@ -20,5 +20,7 @@ DEBUG tests/list_tests.c:143:all_tests:
 ----- test_copy
 DEBUG tests/list_tests.c:144:all_tests: 
 ----- test_concat
-[ERROR] (src/lcthw/list.c:204:List_concat: errno: None) Failed to copy left list.
-[ERROR] (tests/list_tests.c:111:test_concat: errno: None) Failed to concatenate.
+DEBUG tests/list_tests.c:145:all_tests: 
+----- test_split
+DEBUG tests/list_tests.c:146:all_tests: 
+----- test_destroy

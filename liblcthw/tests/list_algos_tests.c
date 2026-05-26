@@ -140,6 +140,7 @@ char *test_sort_performance()
 				"Merge sort benchmark result was not sorted.");
 
 		List_destroy(words);
+		List_destroy(sorted);
 		merge_rounds++;
 		merge_seconds = (double)(clock() - start) / CLOCKS_PER_SEC;
 	}
@@ -154,7 +155,7 @@ char *test_sort_performance()
 	printf("Merge sort: %d rounds in %.2f seconds, %.8f sec/rounds\n",
 			merge_rounds,
 			merge_seconds,
-			bubble_seconds / bubble_rounds);
+			merge_seconds / merge_rounds);
 
 	return NULL;
 }
