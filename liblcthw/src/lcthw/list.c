@@ -185,7 +185,7 @@ List *List_concat(List *left, List *right)
 	check(left != NULL, "left can't be NULL.");
 	check(right != NULL, "right can't be NULL");
 
-	result = List_copy(left);
+
 	check(result != NULL, "Failed to copy left list.");
 
 	LIST_FOREACH(right, first, next, cur) {
@@ -239,3 +239,31 @@ error:
 	return NULL;
 }
 
+int List_join(List *left, List *right)
+{
+	check(left != NULL, "left should not be NULL.");
+	check(right != NULL, "right should not be NULL.");
+
+	if(List_count(right) == 0) {
+		return;
+	}
+	if(List_count(left) == 0) {
+		left->first = right->first;
+		left->last = right->last;
+		left->count = right->count;
+	}else {
+		left->last->next = right->first;
+		right->first->prev = left->last;
+		left->last = right->last;
+		left->count += right->count;
+	}
+
+	right->first = NULL;
+	right->last = NULL;
+	right->count = 0;
+
+	return 0;
+
+error:
+	return 1;
+}

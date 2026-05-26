@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <string.h>
 
-char *values[] = {"XXXX", "1234", "xjvef", "NDSS"}
-#define NUM_VALUES = 5
+char *values[] = {"XXXX", "1234", "abcd", "xjvef", "NDSS"};
+#define NUM_VALUES 5
 
 List *create_words()
 {
@@ -32,7 +32,7 @@ int is_sorted(List *words)
 
 char *test_bubble_sort()
 {
-	List words = create_words();
+	List *words = create_words();
 
 	int rc = List_bubble_sort(words, (List_compare)strcmp);
 	mu_assert(rc == 0, "Bubble sort failed.");
@@ -46,7 +46,7 @@ char *test_bubble_sort()
 	List_destroy(words);
 
 	words = List_create();
-	int rc = List_bubble_sort(words, (List_compare)strcmp);
+	rc = List_bubble_sort(words, (List_compare)strcmp);
 	mu_assert(rc == 0, "Bubble sort failed on empty list.");
 	mu_assert(is_sorted(words), "Words should be sorted if empty.");
 
@@ -73,15 +73,15 @@ char *test_merge_sort()
 	return NULL;
 }
 
-char all_tests()
+char *all_tests()
 {
 	mu_suite_start();
 
-	mu_run_tests(test_bubble_sort);
-	mu_run_tests(test_merge_sort);
+	mu_run_test(test_bubble_sort);
+	mu_run_test(test_merge_sort);
 
 	return NULL;
 
 }
 
-RUN_TESTS(all_tests);
+RUN_TEST(all_tests);

@@ -45,17 +45,17 @@ inline List *List_merge(List *left, List *right, List_compare cmp)
 	{
 		if(List_count(left) > 0 && List_count(right) > 0)
 		{
-			if(cmp(List_first(left), List_first(right)) < 0) {
-				val = List_first(left);
+			if(cmp(List_first(left), List_first(right)) <= 0) {
+				val = List_shift(left);
 			}else {
-				val = List_first(right);
+				val = List_shift(right);
 			}
 			List_push(result, val);
 		}else if(List_count(left) > 0) {
-			val = List_first(left);
+			val = List_shift(left);
 			List_push(result, val);
 		}else if(List_count(right) > 0) {
-			val = List_first(right);
+			val = List_shift(right);
 			List_push(result, val);
 		}
 	}
@@ -65,7 +65,7 @@ error:
 	return NULL;
 }
 
-int *List_merge_sort(List *list, List_compare cmp)
+List *List_merge_sort(List *list, List_compare cmp)
 {
 	if(List_count(list) <= 1) {
 		return list;
